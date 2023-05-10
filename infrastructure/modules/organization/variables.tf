@@ -1,9 +1,9 @@
 variable "organization_structure" {
-    type = map(list(string))
+  type = map(list(string))
 }
 variable "root_organization_id" {
-    type = string
+  type = string
 }
 variable "email_prefix" {
-    type = string
+  type = string
 }
