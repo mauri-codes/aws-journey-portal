@@ -1,17 +1,19 @@
 locals {
-    org_units = {
+    organization_structure = {
         test_accounts = [
-            "test_account_1",
-            "test_account_2"
+            "test_account_A"
         ]
         lab_accounts = [
-            "lab_A_main",
-            "lab_A_sec"
+            "lab_main_A",
+            "lab_sec_A"
         ]
     }
 }
 
-resource "aws_organizations_organizational_unit" "example" {
-  name      = "example"
-#   parent_id = aws_organizations_organization.example.roots[0].id
+module "organization" {
+    source = "../modules/organization"
+    root_organization_id = data.aws_organizations_organization.org.roots[0].id
+    organization_structure = local.organization_structure
+    email_prefix = data.aws_ssm_parameter.email_prefix.value
 }
+
