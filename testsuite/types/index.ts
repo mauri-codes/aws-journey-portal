@@ -13,5 +13,5 @@ export interface AWSCredentialsConfig {
         sessionToken?: string
     }
 }
-type AWSClient = "iam" | "lambda" | "sts" | "ec2"
+export type AWSClient = "iam" | "lambda" | "sts" | "ec2"
 export type AWSClientsObject = {[key in AWSClient]: any};
