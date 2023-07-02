@@ -62,9 +62,13 @@ export abstract class Resource {
     }
     async load() {
         await this.environment.initialize()
+        await this.loadClients(this.environment)
         const loadOutput = await this.loadResource()
         this.loadOutput = loadOutput
         return loadOutput
     }
+    abstract loadClients(environment: AWSEnvironment):void
     abstract loadResource():Promise<TestResult>
 }
+
+export type ResourceCollection = {[key:string]: Resource}
