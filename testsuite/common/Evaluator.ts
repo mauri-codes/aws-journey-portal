@@ -2,9 +2,6 @@ import { ObjectMap } from "../types"
 import { EvaluatorErrorData, EvaluatorReponse } from "../types/evaluator"
 
 export class Evaluator {
-    constructor(expectations: ObjectMap, baseObj: ObjectMap) {
-        
-    }
     static evaluateArrayOfObjects(expectations:ObjectMap[], baseArray: ObjectMap[], path?: string) {
         let response = this.getResponse(true)
         for (const expObj of expectations) {
