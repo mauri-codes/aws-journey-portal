@@ -1,5 +1,5 @@
 import { Evaluator } from "../common/Evaluator"
-import { AttributeMismatch, TestError } from "../errors"
+import { ArrayOfObjectsMismatch, AttributeMismatch, TestError } from "../errors"
 import { ObjectMap } from "../types"
 import { TestResult } from "../types/tests"
 
@@ -8,7 +8,7 @@ export abstract class Test<ResourcesMap> {
     constructor(resources: ResourcesMap) {
         this.resources = resources
     }
-    compareAttributes(resource: string , expectations: ObjectMap, baseObject: ObjectMap) {
+    compareAttributes(resource: string , expectations: ObjectMap = {}, baseObject: ObjectMap={}) {
         let response: TestResult = {
             success: true,
             message: "All attributes match"
@@ -16,6 +16,17 @@ export abstract class Test<ResourcesMap> {
         let evaluation = Evaluator.evaluateAllPrimitivesInObject(expectations, baseObject)
         if (!evaluation.success) {
             throw new TestError(AttributeMismatch(resource, evaluation.data?.parameter || "", evaluation.data?.expected, evaluation.data?.provided))
+        }
+        return response
+    }
+    compareArrayOfObjects(resource: string, expectation: ObjectMap[] = [], baseArray: ObjectMap[] = [], path?: string) {
+        let response: TestResult = {
+            success: true,
+            message: "All attributes match"
+        }
+        let evaluation = Evaluator.evaluateArrayOfObjects(expectation, baseArray, path)
+        if (!evaluation.success) {
+            throw new TestError(ArrayOfObjectsMismatch(resource, evaluation.data?.parameter || "", evaluation.data?.object))
         }
         return response
     }

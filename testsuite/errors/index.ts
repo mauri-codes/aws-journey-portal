@@ -19,3 +19,8 @@ export const AttributeMismatch: (resource: string, attribute: string, expected: 
         message: `${resource} expected attribute ${attribute} to be ${expected}. Found ${found}`
     })
 
+export const ArrayOfObjectsMismatch: (resource: string, attribute: string, expected: any) => ErrorDescription =
+    (resource, attribute, expected) => ({
+        code: ArrayOfObjectsMismatch.name,
+        message: `${resource} expected attribute ${attribute} does not include object: ${JSON.stringify(expected)}`
+    })
