@@ -11,7 +11,7 @@ export class SecurityGroupPropertiesTest extends Test<SecurityGroupTestParams> {
         super({ securityGroup })
     }
     @CatchTestError()
-    async run(): Promise<TestResult> {
+    async runTest(): Promise<TestResult> {
         let securityGroup = this.resources.securityGroup
         this.compareAttributes(securityGroup.resourceName, securityGroup.sgExpectations.SecurityGroupData, securityGroup.sgBaseData)
 

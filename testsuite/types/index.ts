@@ -1,7 +1,7 @@
 // npx tsc
 export interface EnvironmentConfig {
-    accountId: string
     roleArn: string
+    targetAccountId?: string
     region?: string
     secRegion?: string
 }

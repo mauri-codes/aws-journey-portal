@@ -1,5 +1,5 @@
 import { EnvironmentConfig, AWSClientsObject, AWSCredentialsConfig, AWSClient } from "../types"
-import { STSClient, AssumeRoleCommand, STSClientConfig } from "@aws-sdk/client-sts";
+import { STSClient, AssumeRoleCommand, STSClientConfig, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { EC2Client, EC2ClientConfig } from "@aws-sdk/client-ec2";
 import { IAMClient, IAMClientConfig } from "@aws-sdk/client-iam";
 import { TestResult } from "../types/tests";
@@ -32,6 +32,7 @@ export class AWSEnvironment {
                 },
                 region: this.environment.region
             }
+            await this.getAccountNumber()
             this.awsClients = {
                 "iam": (region?: string) => new IAMClient(this.client(this.awsConfig, region) as IAMClientConfig),
                 "lambda": "",
@@ -50,6 +51,13 @@ export class AWSEnvironment {
         if (this.awsClients)
             return this.awsClients[client]()
         return undefined
+    }
+    async getAccountNumber() {
+        if (this.environment.targetAccountId === undefined) {
+            const requestOutput = await this.sts.send(new GetCallerIdentityCommand({}))
+            this.environment.targetAccountId = requestOutput.Account || undefined
+        }
+        return this.environment.targetAccountId
     }
 }
 

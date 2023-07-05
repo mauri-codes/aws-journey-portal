@@ -1,6 +1,6 @@
 import { CatchTestError, Test } from "..";
-import { EC2Instance } from "../../resources/EC2/Instance";
 import { TestResult } from "../../types/tests";
+import { EC2Instance } from "../../resources/EC2/Instance";
 
 interface EC2InstanceTestParams {
     ec2Instance: EC2Instance
@@ -11,7 +11,7 @@ export class EC2InstancePropertiesTest extends Test <EC2InstanceTestParams> {
         this.resources = resources
     }
     @CatchTestError()
-    async run(): Promise<TestResult> {
+    async runTest(): Promise<TestResult> {
         let ec2Instance = this.resources.ec2Instance
         this.compareAttributes(ec2Instance.resourceName, ec2Instance.instanceExpectations.EC2Data || {}, ec2Instance.instanceData || {})
         return {

@@ -1,7 +1,7 @@
 import { Evaluator } from "../common/Evaluator"
-import { ArrayOfObjectsMismatch, AttributeMismatch, TestError } from "../errors"
 import { ObjectMap } from "../types"
 import { TestResult } from "../types/tests"
+import { ArrayOfObjectsMismatch, AttributeMismatch, ResourceDidNotLoad, ResourceLoadError, TestError } from "../errors"
 
 export abstract class Test<ResourcesMap> {
     resources: ResourcesMap
@@ -30,7 +30,23 @@ export abstract class Test<ResourcesMap> {
         }
         return response
     }
-    abstract run(): Promise<TestResult>
+    checkLoadOutput (): TestResult {
+        let resourcesArray = Object.values(this.resources as ObjectMap)
+        resourcesArray.forEach(resource => {
+            if (resource.loadOutput === undefined) {
+                throw new TestError(ResourceDidNotLoad(resource))
+            }
+            if (!resource.loadOutput.success) {
+                throw new TestError(ResourceLoadError(resource))
+            }
+        })
+        return SuccessfulLoad()
+    }
+    async run(): Promise<TestResult> {
+        await this.checkLoadOutput()
+        return await this.runTest()
+    }
+    abstract runTest(): Promise<TestResult>
 }
 
 export function CatchTestError() {
@@ -53,8 +69,8 @@ export function CatchTestError() {
     }
 }
 
-export const SuccessfulLoad: (resource:string) => TestResult =
+export const SuccessfulLoad: (resource?:string) => TestResult =
     (resource) => ({
         success: true,
-        message: `${resource} loaded successfully`
+        message: `${resource + " " || ""}Loaded Successfully`
     })

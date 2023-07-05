@@ -1,3 +1,5 @@
+import { Resource } from "../resources"
+
 export interface ErrorDescription {
     message: string
     code: string
@@ -23,4 +25,16 @@ export const ArrayOfObjectsMismatch: (resource: string, attribute: string, expec
     (resource, attribute, expected) => ({
         code: ArrayOfObjectsMismatch.name,
         message: `${resource} expected attribute ${attribute} does not include object: ${JSON.stringify(expected)}`
+    })
+
+export const ResourceDidNotLoad: (resource: Resource) => ErrorDescription =
+    (resource) => ({
+        code: ResourceDidNotLoad.name,
+        message: `${resource.resourceName} Resource did not load`
+    })
+
+export const ResourceLoadError: (resource: Resource) => ErrorDescription =
+    (resource) => ({
+        code: ResourceLoadError.name,
+        message: `${resource.resourceName} resource load error: ${resource.loadOutput?.message}`
     })
