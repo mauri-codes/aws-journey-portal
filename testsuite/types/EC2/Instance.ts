@@ -1,4 +1,5 @@
 import { Tag } from ".."
+import { AWSEnvironment } from "../../resources"
 
 export interface EC2InstanceIdentifier {
     instanceId?: string
@@ -62,4 +63,10 @@ export interface EC2InstanceExpectations {
         GroupName?: string
         GroupId?: string
     }[]
+}
+
+export interface InstanceConstructorParameters {
+    environment: AWSEnvironment
+    instanceExpectations: EC2InstanceExpectations,
+    instanceIdentifier: EC2InstanceIdentifier
 }

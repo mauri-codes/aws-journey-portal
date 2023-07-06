@@ -7,7 +7,7 @@ import {
     GetPolicyVersionCommand
 } from "@aws-sdk/client-iam";
 import { CatchTestError, SuccessfulLoad } from "../../tests";
-import { ManagedPolicyExpectation, PolicyIdentifier } from "../../types/IAM/Policy";
+import { ManagedPolicyExpectations, PolicyConstructorParameters } from "../../types/IAM/Policy";
 
 export class ManagedPolicy extends IAMResource {
     resourceName: string = ManagedPolicy.name
@@ -16,15 +16,11 @@ export class ManagedPolicy extends IAMResource {
     path: string = "/"
     policyData: Policy | undefined
     policyDocument: PolicyVersion | undefined
-    policyExpectations: ManagedPolicyExpectation | undefined
-    constructor(
-        environment: AWSEnvironment,
-        expectations: ManagedPolicyExpectation,
-        identifier: PolicyIdentifier,
-    ) {
+    policyExpectations: ManagedPolicyExpectations | undefined
+    constructor({environment, policyExpectations, policyIdentifier}: PolicyConstructorParameters) {
         super(environment)
-        const {policyArn, policyName, policyPath} = identifier
-        this.policyExpectations = expectations
+        const {policyArn, policyName, policyPath} = policyIdentifier
+        this.policyExpectations = policyExpectations
         if (policyArn) {
             this.arn = policyArn
             this.name = policyArn.split("/").pop()

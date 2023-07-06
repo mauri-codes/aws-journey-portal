@@ -2,7 +2,7 @@ import { IAMResource } from ".";
 import { AWSEnvironment } from "..";
 import { ManagedPolicy } from "./Policy";
 import { CatchTestError, SuccessfulLoad } from "../../tests";
-import { RoleExpectation, RoleIdentifier } from "../../types/IAM/Role";
+import { RoleConstructorParameters, RoleExpectation, RoleIdentifier } from "../../types/IAM/Role";
 import {
     GetRoleCommand,
     AttachedPolicy,
@@ -19,10 +19,10 @@ export class Role extends IAMResource {
     managedPoliciesList: AttachedPolicy[] | undefined
     managedPolicies: ManagedPolicy[] | undefined
     inlinePolicies: string[] | undefined
-    constructor(environment: AWSEnvironment, expectations: RoleExpectation, identifier?: RoleIdentifier) {
+    constructor({environment, roleExpectations, roleIdentifier}: RoleConstructorParameters) {
         super(environment)
-        this.roleExpectations = expectations
-        this.roleName = identifier?.roleName || ""
+        this.roleExpectations = roleExpectations
+        this.roleName = roleIdentifier?.roleName || ""
     }
     async getRoledData() {
         const params = {RoleName: this.roleName}

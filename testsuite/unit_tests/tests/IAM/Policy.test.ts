@@ -9,10 +9,10 @@ import {
     ActionMisspellStatementExpectation,
     testPolicyDocument,
     testPolicyData,
-    testEnv
+    environment
 } from "./Policy.data";
 
-const testPolicy = new ManagedPolicy(testEnv, {}, {})
+const testPolicy = new ManagedPolicy({environment, policyExpectations: {}, policyIdentifier: {}})
 testPolicy.policyData = testPolicyData
 testPolicy.policyDocument = testPolicyDocument
 testPolicy.loadOutput = {

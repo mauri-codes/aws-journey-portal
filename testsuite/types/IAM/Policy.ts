@@ -1,10 +1,12 @@
-export interface PolicyIdentifier {
+import { AWSEnvironment } from "../../resources"
+
+export interface ManagedPolicyIdentifier {
     policyArn?: string
     policyName?: string
     policyPath?: string
 }
 
-export interface ManagedPolicyExpectation {
+export interface ManagedPolicyExpectations {
     PolicyData?: {
         PolicyId?: string
         Path?: string
@@ -32,4 +34,10 @@ export interface OnlyArrayPolicyStatement {
 export interface AWSPolicyDocument {
     Version: string
     Statement: PolicyStatement[]
+}
+
+export interface PolicyConstructorParameters {
+    environment: AWSEnvironment
+    policyExpectations: ManagedPolicyExpectations,
+    policyIdentifier: ManagedPolicyIdentifier
 }

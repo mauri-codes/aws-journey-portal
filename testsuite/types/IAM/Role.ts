@@ -22,3 +22,9 @@ export interface RoleExpectation {
     InlinePolicies?: string[]
     ManagedPolicies?: ManagedPolicy[]
 }
+
+export interface RoleConstructorParameters {
+    environment: AWSEnvironment
+    roleExpectations: RoleExpectation,
+    roleIdentifier: RoleIdentifier
+}

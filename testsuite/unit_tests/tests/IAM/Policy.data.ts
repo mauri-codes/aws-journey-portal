@@ -1,5 +1,5 @@
 import { AWSEnvironment } from "../../../resources"
-import { ManagedPolicyExpectation, PolicyStatement } from "../../../types/IAM/Policy"
+import { ManagedPolicyExpectations, PolicyStatement } from "../../../types/IAM/Policy"
 
 export const testPolicyData = {
     PolicyName: 'TEST_POLICY',
@@ -20,7 +20,7 @@ export const testPolicyDocument = {
     IsDefaultVersion: true,
     // CreateDate: new Date("2022-06-22T14:06:51.000Z")
 }
-export const testEnv = new AWSEnvironment({
+export const environment = new AWSEnvironment({
     roleArn: "arn:aws:iam::<ACCOUNT>:role/AWS_JOURNEY_READ_ONLY",
     region: "us-east-1"
 })
@@ -75,13 +75,13 @@ let SingleBucketPolicyStatement: PolicyStatement = {
     ]
 }
 
-export let noArrayStatementsExpectations: ManagedPolicyExpectation = {
+export let noArrayStatementsExpectations: ManagedPolicyExpectations = {
     PolicyData: SuccessfulPolicyData,
     PolicyDocumentStatements: [
         NoArrayPolicyStatement
     ]
 }
-export let simpleStatementExpectation: ManagedPolicyExpectation = {
+export let simpleStatementExpectation: ManagedPolicyExpectations = {
     PolicyData: {
         DefaultVersionId: "v2", // SHOULD FAIL
         Path: "/"
@@ -90,7 +90,7 @@ export let simpleStatementExpectation: ManagedPolicyExpectation = {
         SimpleArrayPolicyStatement
     ]
 }
-export let ActionMisspellStatementExpectation: ManagedPolicyExpectation = {
+export let ActionMisspellStatementExpectation: ManagedPolicyExpectations = {
     PolicyData: {
         DefaultVersionId: "v1",
         Path: "/dd/" // SHOULD FAIL
@@ -100,7 +100,7 @@ export let ActionMisspellStatementExpectation: ManagedPolicyExpectation = {
     ]
 }
 
-export let MultipleStatementsExpectation: ManagedPolicyExpectation = {
+export let MultipleStatementsExpectation: ManagedPolicyExpectations = {
     PolicyData: SuccessfulPolicyData,
     PolicyDocumentStatements: [
         S3StarPolicyStatement,
@@ -109,7 +109,7 @@ export let MultipleStatementsExpectation: ManagedPolicyExpectation = {
     ]
 }
 
-export let BadMultipleStatementsExpectation: ManagedPolicyExpectation = {
+export let BadMultipleStatementsExpectation: ManagedPolicyExpectations = {
     PolicyData: SuccessfulPolicyData,
     PolicyDocumentStatements: [
         S3StarPolicyStatement,
@@ -118,7 +118,7 @@ export let BadMultipleStatementsExpectation: ManagedPolicyExpectation = {
     ]
 }
 
-export let MultipleStatementsExpectation2: ManagedPolicyExpectation = {
+export let MultipleStatementsExpectation2: ManagedPolicyExpectations = {
     PolicyData: SuccessfulPolicyData,
     PolicyDocumentStatements: [
         S3StarPolicyStatement,

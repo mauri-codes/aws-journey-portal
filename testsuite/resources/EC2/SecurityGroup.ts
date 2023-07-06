@@ -6,10 +6,10 @@ import {
     DescribeSecurityGroupRulesCommandInput,
     SecurityGroupRule as AWSSecurityGroupRule
 } from "@aws-sdk/client-ec2";
-import { AWSEnvironment } from "..";
 import { CatchTestError, SuccessfulLoad } from "../../tests";
 import { TestResult } from "../../types/tests";
 import {
+    SecurityGroupConstructorParameters,
     SecurityGroupExpectations,
     SecurityGroupIdentifier
 } from "../../types/EC2/SecurityGroup";
@@ -25,13 +25,9 @@ export class SecurityGroup extends EC2Resource {
     sgFound: number | undefined
     sgRules: AWSSecurityGroupRule[] | undefined
     sgExpectations: SecurityGroupExpectations
-    constructor(
-            environment: AWSEnvironment,
-            identifier: SecurityGroupIdentifier,
-            sgExpectations: SecurityGroupExpectations
-        ) {
+    constructor({environment, sgExpectations, sgIdentifier}: SecurityGroupConstructorParameters) {
         super(environment)
-        this.sgIdentifier = identifier
+        this.sgIdentifier = sgIdentifier
         this.sgExpectations = sgExpectations
     }
 

@@ -1,4 +1,5 @@
 import { Tag } from ".."
+import { AWSEnvironment } from "../../resources"
 
 export interface SecurityGroupRule {
     IpProtocol?: string
@@ -26,4 +27,10 @@ export interface SecurityGroupExpectations {
     }
     InboundRules?: SecurityGroupRule[]
     OutboundRules?: SecurityGroupRule[]
+}
+
+export interface SecurityGroupConstructorParameters {
+    environment: AWSEnvironment
+    sgExpectations: SecurityGroupExpectations,
+    sgIdentifier: SecurityGroupIdentifier
 }
