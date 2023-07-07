@@ -1,5 +1,4 @@
-import { IAMResource } from ".";
-import { AWSEnvironment } from "..";
+import { IAMPolicy } from ".";
 import {
     Policy,
     PolicyVersion,
@@ -9,7 +8,7 @@ import {
 import { CatchTestError, SuccessfulLoad } from "../../tests";
 import { ManagedPolicyExpectations, PolicyConstructorParameters } from "../../types/IAM/Policy";
 
-export class ManagedPolicy extends IAMResource {
+export class ManagedPolicy extends IAMPolicy {
     resourceName: string = ManagedPolicy.name
     arn: string | undefined
     name: string | undefined
@@ -45,6 +44,7 @@ export class ManagedPolicy extends IAMResource {
         }
         const requestOutput = await this.client.send(new GetPolicyVersionCommand(params))
         this.policyDocument = requestOutput.PolicyVersion
+        this.policyDoc = this.policyDocument?.Document
         return this.policyDocument
     }
     async getArn() {

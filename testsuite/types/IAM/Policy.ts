@@ -1,12 +1,21 @@
 import { AWSEnvironment } from "../../resources"
 
+export interface InlinePolicyIdentifier {
+    policyName?: string
+    roleName?: string
+}
+
 export interface ManagedPolicyIdentifier {
     policyArn?: string
     policyName?: string
     policyPath?: string
 }
 
-export interface ManagedPolicyExpectations {
+export interface PolicyExpectations {
+    PolicyDocumentStatements?: PolicyStatement[]
+}
+
+export interface ManagedPolicyExpectations extends PolicyExpectations {
     PolicyData?: {
         PolicyId?: string
         Path?: string
@@ -14,7 +23,6 @@ export interface ManagedPolicyExpectations {
         AttachmentCount?: number
         Description?: string
     }
-    PolicyDocumentStatements?: PolicyStatement[]
 }
 
 export interface PolicyStatement {
@@ -40,4 +48,9 @@ export interface PolicyConstructorParameters {
     environment: AWSEnvironment
     policyExpectations: ManagedPolicyExpectations,
     policyIdentifier: ManagedPolicyIdentifier
+}
+export interface InlinePolicyConstructorParameters {
+    environment: AWSEnvironment
+    policyExpectations: PolicyExpectations,
+    policyIdentifier: InlinePolicyIdentifier
 }

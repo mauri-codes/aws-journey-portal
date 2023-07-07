@@ -15,6 +15,7 @@ import {
 const testPolicy = new ManagedPolicy({environment, policyExpectations: {}, policyIdentifier: {}})
 testPolicy.policyData = testPolicyData
 testPolicy.policyDocument = testPolicyDocument
+testPolicy.policyDoc = testPolicyDocument.Document
 testPolicy.loadOutput = {
     success: true
 }

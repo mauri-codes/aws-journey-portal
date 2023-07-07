@@ -1,5 +1,4 @@
 import { IAMResource } from ".";
-import { AWSEnvironment } from "..";
 import { ManagedPolicy } from "./Policy";
 import { CatchTestError, SuccessfulLoad } from "../../tests";
 import { RoleConstructorParameters, RoleExpectation, RoleIdentifier } from "../../types/IAM/Role";
@@ -34,10 +33,12 @@ export class Role extends IAMResource {
     async getManagedPoliciesList() {
         const params = {RoleName: this.roleName}
         const requestOutput = await this.client.send(new ListAttachedRolePoliciesCommand(params))
+        console.log(requestOutput);
+        
         this.managedPoliciesList = requestOutput.AttachedPolicies
         return this.managedPoliciesList
     }
-    async getManagedPolicies() {
+    async loadExpectationsManagedPolicies() {
         if(this.roleExpectations?.ManagedPolicies) {
             const policiesRequests = this.roleExpectations.ManagedPolicies.map((policy) => policy.load())
             await Promise.all(policiesRequests)
@@ -61,7 +62,7 @@ export class Role extends IAMResource {
         }
         if (this.roleExpectations?.ManagedPolicies) {
             requests.push(this.getManagedPoliciesList())
-            requests.push(this.getManagedPolicies())
+            requests.push(this.loadExpectationsManagedPolicies())
         }
         await Promise.all(requests)
         return SuccessfulLoad(this.resourceName)

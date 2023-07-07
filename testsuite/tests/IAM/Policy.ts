@@ -6,13 +6,13 @@ import {
 import { TestError } from "../../errors";
 import { Test, CatchTestError } from "..";
 import { TestResult } from "../../types/tests";
+import { IAMPolicy } from "../../resources/IAM";
 import { Evaluator } from "../../common/Evaluator";
-import { ManagedPolicy } from "../../resources/IAM/Policy";
 import { AWSPolicyDocument, OnlyArrayPolicyStatement, PolicyStatement } from "../../types/IAM/Policy";
 import { PolicyEvaluationFailed, PolicyEvaluationSuccededError, PolicyStatementNotFound } from "../../errors/IAM/Policy";
 
 interface PolicyStatementTestResources {
-    policy: ManagedPolicy
+    policy: IAMPolicy
 }
 
 export abstract class PolicyStatementsTest extends Test<PolicyStatementTestResources> {
@@ -24,7 +24,7 @@ export abstract class PolicyStatementsTest extends Test<PolicyStatementTestResou
     constructor({policy}: PolicyStatementTestResources) {
         super({policy})
         this.resources = {policy}
-        this.policyDocumentEncoded = policy.policyDocument?.Document || ""
+        this.policyDocumentEncoded = policy.policyDoc || ""
         this.expectationStatements = policy.policyExpectations?.PolicyDocumentStatements || []
     }
     preProcessStatements() {
@@ -95,10 +95,9 @@ export class EvaluatePolicyDocument extends PolicyStatementsTest {
         ;(this.onlyArrayExpectationStatements || []).forEach(({Action, Effect}, index) => {
             let evaluationObj = mappedResponses[index]
             ;(Action as string[]).forEach((action) => {
-                if (evaluationObj[action] === "allowed" && Effect === "Deny") throw new TestError(PolicyEvaluationSuccededError(this.resources.policy.name || this.resources.policy.resourceName , action))
-                if (evaluationObj[action] !== "allowed" && Effect === "Allow") throw new TestError(PolicyEvaluationFailed(this.resources.policy.name || this.resources.policy.resourceName, action))
+                if (evaluationObj[action] === "allowed" && Effect === "Deny") throw new TestError(PolicyEvaluationSuccededError(this.resources.policy.policyName || this.resources.policy.resourceName , action))
+                if (evaluationObj[action] !== "allowed" && Effect === "Allow") throw new TestError(PolicyEvaluationFailed(this.resources.policy.policyName || this.resources.policy.resourceName, action))
             })
-            
         })
         return {
             success: true,
