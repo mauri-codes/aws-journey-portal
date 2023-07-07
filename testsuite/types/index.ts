@@ -18,5 +18,5 @@ export interface Tag {
     Name: string
     Value: string
 }
-export type AWSClient = "iam" | "lambda" | "sts" | "ec2"
+export type AWSClient = "iam" | "lambda" | "sts" | "ec2" | "s3"
 export type AWSClientsObject = {[key in AWSClient]: any};

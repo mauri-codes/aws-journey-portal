@@ -5,7 +5,6 @@ import { EnvironmentCollection, TestSuiteReport } from "../types/testsuites";
 
 export abstract class TestSuite <ResourceCollectionObject> {
     environments: EnvironmentCollection
-    resources: ResourceCollectionObject | undefined
     resourcesList: Resource[] = []
     tests: Test<any>[] = []
     constructor(environment: EnvironmentCollection) {

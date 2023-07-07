@@ -2,8 +2,8 @@ import { EnvironmentConfig, AWSClientsObject, AWSCredentialsConfig, AWSClient } 
 import { STSClient, AssumeRoleCommand, STSClientConfig, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { EC2Client, EC2ClientConfig } from "@aws-sdk/client-ec2";
 import { IAMClient, IAMClientConfig } from "@aws-sdk/client-iam";
+import { S3Client } from "@aws-sdk/client-s3";
 import { TestResult } from "../types/tests";
-
 
 export class AWSEnvironment {
     environment: EnvironmentConfig
@@ -34,6 +34,7 @@ export class AWSEnvironment {
             }
             await this.getAccountNumber()
             this.awsClients = {
+                "s3": (region?: string) => new S3Client(this.client(this.awsConfig, region) as IAMClientConfig),
                 "iam": (region?: string) => new IAMClient(this.client(this.awsConfig, region) as IAMClientConfig),
                 "lambda": "",
                 "sts": (region?: string) => new STSClient(this.client(this.awsConfig, region) as STSClientConfig),

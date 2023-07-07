@@ -1,4 +1,5 @@
 import { Tag } from ".."
+import { AWSEnvironment } from "../../resources"
 import { ManagedPolicy } from "../../resources/IAM/Policy"
 
 export interface RoleIdentifier {
