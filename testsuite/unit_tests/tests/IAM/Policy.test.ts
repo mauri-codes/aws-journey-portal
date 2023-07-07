@@ -1,4 +1,4 @@
-import { ManagedPolicy } from "../../../resources/IAM/Policy";
+import { CustomerManagedPolicy } from "../../../resources/IAM/Policy";
 import { CheckPolicyStatements } from "../../../tests/IAM/Policy";
 import { 
     simpleStatementExpectation,
@@ -12,7 +12,7 @@ import {
     environment
 } from "./Policy.data";
 
-const testPolicy = new ManagedPolicy({environment, policyExpectations: {}, policyIdentifier: {}})
+const testPolicy = new CustomerManagedPolicy({environment, policyExpectations: {}, policyIdentifier: {}})
 testPolicy.policyData = testPolicyData
 testPolicy.policyDocument = testPolicyDocument
 testPolicy.policyDoc = testPolicyDocument.Document

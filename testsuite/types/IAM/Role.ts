@@ -1,6 +1,8 @@
 import { Tag } from ".."
 import { AWSEnvironment } from "../../resources"
-import { ManagedPolicy } from "../../resources/IAM/Policy"
+import { InlinePolicy } from "../../resources/IAM/InlinePolicy"
+import { CustomerManagedPolicy } from "../../resources/IAM/Policy"
+import { AWSManagedPolicyType } from "./AWSPolicy"
 
 export interface RoleIdentifier {
     roleName?: string
@@ -20,8 +22,9 @@ export interface RoleExpectation {
         MaxSessionDuration?: string
         Tags?: Tag
     }
-    InlinePolicies?: string[]
-    ManagedPolicies?: ManagedPolicy[]
+    InlinePolicies?: InlinePolicy[]
+    CustomerManagedPolicies?: CustomerManagedPolicy[]
+    AWSManagedPolicies?: AWSManagedPolicyType[]
 }
 
 export interface RoleConstructorParameters {

@@ -1,7 +1,7 @@
 import { IAMResource } from ".";
-import { ManagedPolicy } from "./Policy";
+import { CustomerManagedPolicy } from "./Policy";
 import { CatchTestError, SuccessfulLoad } from "../../tests";
-import { RoleConstructorParameters, RoleExpectation, RoleIdentifier } from "../../types/IAM/Role";
+import { RoleConstructorParameters, RoleExpectation } from "../../types/IAM/Role";
 import {
     GetRoleCommand,
     AttachedPolicy,
@@ -16,7 +16,7 @@ export class Role extends IAMResource {
     roleExpectations: RoleExpectation | undefined
     roleData: RoleData | undefined
     managedPoliciesList: AttachedPolicy[] | undefined
-    managedPolicies: ManagedPolicy[] | undefined
+    managedPolicies: CustomerManagedPolicy[] | undefined
     inlinePolicies: string[] | undefined
     constructor({environment, roleExpectations, roleIdentifier}: RoleConstructorParameters) {
         super(environment)
@@ -39,10 +39,10 @@ export class Role extends IAMResource {
         return this.managedPoliciesList
     }
     async loadExpectationsManagedPolicies() {
-        if(this.roleExpectations?.ManagedPolicies) {
-            const policiesRequests = this.roleExpectations.ManagedPolicies.map((policy) => policy.load())
+        if(this.roleExpectations?.CustomerManagedPolicies) {
+            const policiesRequests = this.roleExpectations.CustomerManagedPolicies.map((policy) => policy.load())
             await Promise.all(policiesRequests)
-            this.managedPolicies = this.roleExpectations.ManagedPolicies
+            this.managedPolicies = this.roleExpectations.CustomerManagedPolicies
         }
     }
     async getInlinePolicies() {
@@ -60,7 +60,7 @@ export class Role extends IAMResource {
         if (this.roleExpectations?.InlinePolicies) {
             requests.push(this.getInlinePolicies())
         }
-        if (this.roleExpectations?.ManagedPolicies) {
+        if (this.roleExpectations?.CustomerManagedPolicies) {
             requests.push(this.getManagedPoliciesList())
             requests.push(this.loadExpectationsManagedPolicies())
         }

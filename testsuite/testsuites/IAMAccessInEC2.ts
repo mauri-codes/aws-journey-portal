@@ -1,7 +1,7 @@
 import { TestSuite } from ".";
 import { AWSEnvironment } from "../resources";
 import { EC2Instance } from "../resources/EC2/Instance";
-import { ManagedPolicy } from "../resources/IAM/Policy";
+import { CustomerManagedPolicy } from "../resources/IAM/Policy";
 import { Role } from "../resources/IAM/Role";
 import { EC2InstanceExpectations, EC2InstanceIdentifier } from "../types/EC2/Instance";
 import { ManagedPolicyExpectations, ManagedPolicyIdentifier } from "../types/IAM/Policy";
@@ -42,8 +42,8 @@ export class IAMAccessInEC2TestSuite extends TestSuite<{environment: AWSEnvironm
             roleName: "LabRole"
         }
         let roleExpectations: RoleExpectation = {
-            ManagedPolicies: [
-                new ManagedPolicy({environment, policyExpectations, policyIdentifier})
+            CustomerManagedPolicies: [
+                new CustomerManagedPolicy({environment, policyExpectations, policyIdentifier})
             ]
         }
         this.resources = {

@@ -8,8 +8,8 @@ import {
 import { CatchTestError, SuccessfulLoad } from "../../tests";
 import { ManagedPolicyExpectations, PolicyConstructorParameters } from "../../types/IAM/Policy";
 
-export class ManagedPolicy extends IAMPolicy {
-    resourceName: string = ManagedPolicy.name
+export class CustomerManagedPolicy extends IAMPolicy {
+    resourceName: string = CustomerManagedPolicy.name
     arn: string | undefined
     name: string | undefined
     path: string = "/"
