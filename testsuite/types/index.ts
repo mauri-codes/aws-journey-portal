@@ -1,3 +1,5 @@
+import { Resource } from "../resources"
+
 // npx tsc
 export interface EnvironmentConfig {
     roleArn: string
@@ -14,6 +16,8 @@ export interface AWSCredentialsConfig {
     }
 }
 export type ObjectMap = {[key: string]: any}
+export type ResourceMap = {[key: string]: Resource}
+
 export interface Tag {
     Name: string
     Value: string

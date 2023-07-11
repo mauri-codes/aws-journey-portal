@@ -69,8 +69,9 @@ export function CatchTestError() {
     }
 }
 
-export const SuccessfulLoad: (resource?:string) => TestResult =
-    (resource) => ({
+export const SuccessfulLoad: (resource?:string, tests?:TestResult[]) => TestResult =
+    (resource, tests) => ({
         success: true,
-        message: `${resource + " " || ""}Loaded Successfully`
+        message: `${resource + " " || ""}Loaded Successfully`,
+        tests
     })

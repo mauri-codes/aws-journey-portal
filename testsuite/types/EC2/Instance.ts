@@ -1,5 +1,6 @@
 import { Tag } from ".."
 import { AWSEnvironment } from "../../resources"
+import { Role } from "../../resources/IAM/Role"
 
 export interface EC2InstanceIdentifier {
     instanceId?: string
@@ -63,6 +64,7 @@ export interface EC2InstanceExpectations {
         GroupName?: string
         GroupId?: string
     }[]
+    Role?: Role
 }
 
 export interface InstanceConstructorParameters {

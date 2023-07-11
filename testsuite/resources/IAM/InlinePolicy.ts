@@ -1,10 +1,9 @@
+import { ResourceLoadedSuccessfully, TestError } from "../../errors"
+import { CatchTestError } from "../../tests"
 import { IAMPolicy } from "."
-import { TestError } from "../../errors"
-import { CatchTestError, SuccessfulLoad } from "../../tests"
 import { GetRolePolicyCommand, GetRolePolicyRequest } from "@aws-sdk/client-iam"
 import { InlinePolicyConstructorParameters, PolicyExpectations } from "../../types/IAM/Policy"
 import { NoPolicyNameForInlinePolicy, NoRoleNameForInlinePolicy } from "../../errors/IAM/InlinePolicy"
-
 
 export class InlinePolicy extends IAMPolicy {
     resourceName: string = InlinePolicy.name
@@ -26,10 +25,10 @@ export class InlinePolicy extends IAMPolicy {
         }
         const requestOutput = await this.client.send(new GetRolePolicyCommand(params))
         this.policyDoc = requestOutput.PolicyDocument
+        return ResourceLoadedSuccessfully(this.resourceName, this.policyName)
     }
     @CatchTestError()
     async loadResource() {
-        await this.getRolePolicy()
-        return SuccessfulLoad(this.resourceName)
+        return await this.getRolePolicy()
     }
 }

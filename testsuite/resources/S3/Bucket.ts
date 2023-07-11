@@ -14,11 +14,11 @@ export class Bucket extends S3Resource {
     resourceName:string = Bucket.name
     bucketArn: string | undefined
     bucketIdentifier: BucketIdentifier
-    bucketExpectations: BucketExpectations
+    bucketExpectations: BucketExpectations | undefined
     constructor({environment, bucketExpectations, bucketIdentifier}: BucketConstructorParameters) {
         super(environment)
         this.bucketIdentifier = bucketIdentifier
-        this.bucketExpectations = bucketExpectations
+        this.bucketExpectations = bucketExpectations 
     }
     async checkBucket () {
         const { bucketName } = this.bucketIdentifier

@@ -78,6 +78,20 @@ export abstract class Resource {
     }
     abstract loadClients(environment: AWSEnvironment):void
     abstract loadResource():Promise<TestResult>
+    flattenTestResults (responses: TestResult[]) {
+        let extraResponses: TestResult[] = []
+        responses = responses.filter(response => {
+            if (response.tests) {
+                extraResponses = extraResponses.concat(response.tests)
+                if(response.message === undefined) {
+                    return false
+                }
+                response.tests = undefined
+            }
+            return true
+        })
+        return responses.concat(extraResponses)
+    }
 }
 
 export type ResourceCollection = {[key:string]: Resource}

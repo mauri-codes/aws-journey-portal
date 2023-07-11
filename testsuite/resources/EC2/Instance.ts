@@ -1,11 +1,10 @@
-import { DescribeInstancesCommand, Instance } from "@aws-sdk/client-ec2"
-import { EC2Resource } from "."
 import { EC2InstanceExpectations, EC2InstanceIdentifier, InstanceConstructorParameters } from "../../types/EC2/Instance"
-import { TestError } from "../../errors"
 import { InstanceNotFound, MultipleNamedInstancesFound } from "../../errors/EC2/Instance"
-import { CatchTestError, SuccessfulLoad } from "../../tests";
+import { DescribeInstancesCommand, Instance } from "@aws-sdk/client-ec2"
+import { ResourceLoadedSuccessfully, TestError } from "../../errors"
 import { TestResult } from "../../types/tests"
-
+import { CatchTestError } from "../../tests"
+import { EC2Resource } from "."
 
 export class EC2Instance extends EC2Resource {
     resourceName: string = EC2Instance.name
@@ -69,13 +68,14 @@ export class EC2Instance extends EC2Resource {
             throw new TestError(MultipleNamedInstancesFound(this.instanceSummary))
         this.instanceData = Instances[0]
         
-        return this.instanceData
+        return ResourceLoadedSuccessfully(this.getIdentifierSummary().toString(), this.resourceName)
     }
     @CatchTestError()
     async loadResource(): Promise<TestResult> {
-        console.log("Load Resource : )");
-        
-        await this.describeInstance()
-        return SuccessfulLoad(this.resourceName)
+        let response = await this.describeInstance()
+        if (this.instanceExpectations.Role) {
+            response.tests = this.flattenTestResults([await this.instanceExpectations.Role.load()])
+        }
+        return response
     }
 }

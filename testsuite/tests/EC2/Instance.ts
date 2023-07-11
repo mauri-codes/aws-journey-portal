@@ -16,7 +16,8 @@ export class EC2InstancePropertiesTest extends Test <EC2InstanceTestParams> {
         this.compareAttributes(ec2Instance.resourceName, ec2Instance.instanceExpectations.EC2Data || {}, ec2Instance.instanceData || {})
         return {
             success: true,
-            message: `All attribures for ${ec2Instance.resourceName} match`
+            testCode: EC2InstancePropertiesTest.name,
+            message: `All attribures for ${ec2Instance.resourceName} ${ec2Instance.getIdentifierSummary()} match`
         }
     }
 }

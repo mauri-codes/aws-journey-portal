@@ -1,6 +1,6 @@
 import { IAMResource } from ".";
 import { CustomerManagedPolicy } from "./Policy";
-import { CatchTestError, SuccessfulLoad } from "../../tests";
+import { CatchTestError } from "../../tests";
 import { RoleConstructorParameters, RoleExpectation } from "../../types/IAM/Role";
 import {
     GetRoleCommand,
@@ -9,6 +9,8 @@ import {
     ListRolePoliciesCommand,
     ListAttachedRolePoliciesCommand
 } from "@aws-sdk/client-iam";
+import { ResourceDataLoadedSuccessfully, ResourceLoadedSuccessfully } from "../../errors";
+import { TestResult } from "../../types/tests";
 
 export class Role extends IAMResource {
     resourceName: string = Role.name
@@ -18,6 +20,8 @@ export class Role extends IAMResource {
     managedPoliciesList: AttachedPolicy[] | undefined
     managedPolicies: CustomerManagedPolicy[] | undefined
     inlinePolicies: string[] | undefined
+    AWSManagedPolicies: AttachedPolicy[] = []
+    CustomerManagedPolicies: AttachedPolicy[] = []
     constructor({environment, roleExpectations, roleIdentifier}: RoleConstructorParameters) {
         super(environment)
         this.roleExpectations = roleExpectations
@@ -27,44 +31,63 @@ export class Role extends IAMResource {
         const params = {RoleName: this.roleName}
         const requestOutput = await this.client.send(new GetRoleCommand(params))
         this.roleData = requestOutput.Role
-        
-        return this.roleData
+        if (this.roleExpectations?.CustomerManagedPolicies || this.roleExpectations?.AWSManagedPolicies) {
+            await this.getManagedPoliciesList()
+        }
+        await this.getInlinePolicies()
+        return ResourceDataLoadedSuccessfully(this.roleName, this.resourceName)
     }
     async getManagedPoliciesList() {
         const params = {RoleName: this.roleName}
         const requestOutput = await this.client.send(new ListAttachedRolePoliciesCommand(params))
-        console.log(requestOutput);
         
         this.managedPoliciesList = requestOutput.AttachedPolicies
+        this.AWSManagedPolicies = this.managedPoliciesList?.filter(policy => policy.PolicyArn?.startsWith("arn:aws:iam::aws:policy/")) || []
+        this.CustomerManagedPolicies = this.managedPoliciesList?.filter(policy => !policy.PolicyArn?.startsWith("arn:aws:iam::aws:policy/")) || []
         return this.managedPoliciesList
     }
-    async loadExpectationsManagedPolicies() {
+    async loadExpectationsManagedPolicies(): Promise<TestResult> {
+        let policyResponses: TestResult[] = []
         if(this.roleExpectations?.CustomerManagedPolicies) {
             const policiesRequests = this.roleExpectations.CustomerManagedPolicies.map((policy) => policy.load())
-            await Promise.all(policiesRequests)
+            policyResponses = await Promise.all(policiesRequests)
             this.managedPolicies = this.roleExpectations.CustomerManagedPolicies
+        }
+        return {
+            success: true,
+            tests: policyResponses
+        }
+    }
+    async loadExpectationsInlinePolicies(): Promise<TestResult> {
+        let policyResponses: TestResult[] = []
+        if (this.roleExpectations?.InlinePolicies) {
+            this.roleExpectations?.InlinePolicies?.forEach(policy => policy.roleName = this.roleName)
+            const policyRequests = this.roleExpectations?.InlinePolicies?.map(policy => policy.load())
+            policyResponses = await Promise.all(policyRequests)
+        }
+        return {
+            success: true,
+            tests: policyResponses
         }
     }
     async getInlinePolicies() {
         const params = {RoleName: this.roleName}
         const requestOutput = await this.client.send(new ListRolePoliciesCommand(params))
         this.inlinePolicies = requestOutput.PolicyNames
+        
         return this.inlinePolicies
     } 
     @CatchTestError()
     async loadResource () {
-        let requests: Promise<any>[] = []
-        if (this.roleExpectations?.RoleData) {
-            requests.push(this.getRoledData())
-        }
-        if (this.roleExpectations?.InlinePolicies) {
-            requests.push(this.getInlinePolicies())
-        }
+        let requests: Promise<TestResult>[] = []
+        requests.push(this.getRoledData())
         if (this.roleExpectations?.CustomerManagedPolicies) {
-            requests.push(this.getManagedPoliciesList())
             requests.push(this.loadExpectationsManagedPolicies())
         }
-        await Promise.all(requests)
-        return SuccessfulLoad(this.resourceName)
+        if (this.roleExpectations?.InlinePolicies) {
+            requests.push(this.loadExpectationsInlinePolicies())
+        }
+        const responses = await Promise.all(requests)
+        return ResourceLoadedSuccessfully(this.roleName, this.resourceName, this.flattenTestResults(responses))
     }
 }

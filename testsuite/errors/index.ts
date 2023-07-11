@@ -1,4 +1,5 @@
 import { Resource } from "../resources"
+import { TestResult } from "../types/tests"
 
 export interface ErrorDescription {
     message: string
@@ -37,4 +38,17 @@ export const ResourceLoadError: (resource: Resource) => ErrorDescription =
     (resource) => ({
         code: ResourceLoadError.name,
         message: `${resource.resourceName} resource load error: ${resource.loadOutput?.message}`
+    })
+export const ResourceLoadedSuccessfully: (resourceName: string, resource: string, tests?: TestResult[]) => TestResult =
+    (resource, resourceName, tests?) => ({
+        success: true,
+        code: ResourceLoadedSuccessfully.name,
+        message: `${resourceName} ${resource} loaded successfully`,
+        tests
+    })
+export const ResourceDataLoadedSuccessfully: (resourceName: string, resource: string) => TestResult =
+    (resource, resourceName) => ({
+        success: true,
+        code: ResourceDataLoadedSuccessfully.name,
+        message: `${resourceName} ${resource} data loaded successfully`
     })

@@ -60,7 +60,8 @@ export class CheckPolicyStatements extends PolicyStatementsTest {
         }
         return {
             success: true,
-            message: "All statements are present in the policy document"
+            testCode: CheckPolicyStatements.name,
+            message: `All statements pass the evaluation for ${this.resources.policy.policyName}`
         }
     }
 }
@@ -81,7 +82,6 @@ export class EvaluatePolicyDocument extends PolicyStatementsTest {
                 PolicyInputList: [decodeURIComponent(JSON.stringify(this.policyDocument))],
                 ResourceArns: Resource as string[]
             }
-            
             return iamClient.send(new SimulateCustomPolicyCommand(params))
         })
         const requestResponses = await Promise.all(requests)
@@ -101,7 +101,8 @@ export class EvaluatePolicyDocument extends PolicyStatementsTest {
         })
         return {
             success: true,
-            message: "All statements pass the evaluation"
+            testCode: EvaluatePolicyDocument.name,
+            message: `All statements pass the evaluation for ${this.resources.policy.policyName}`
         }
     }
 }

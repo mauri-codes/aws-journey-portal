@@ -4,9 +4,11 @@ import {
     PolicyVersion,
     GetPolicyCommand,
     GetPolicyVersionCommand
-} from "@aws-sdk/client-iam";
-import { CatchTestError, SuccessfulLoad } from "../../tests";
-import { ManagedPolicyExpectations, PolicyConstructorParameters } from "../../types/IAM/Policy";
+} from "@aws-sdk/client-iam"
+import { ManagedPolicyExpectations, PolicyConstructorParameters } from "../../types/IAM/Policy"
+import { ResourceLoadedSuccessfully } from "../../errors"
+import { TestResult } from "../../types/tests"
+import { CatchTestError } from "../../tests"
 
 export class CustomerManagedPolicy extends IAMPolicy {
     resourceName: string = CustomerManagedPolicy.name
@@ -16,6 +18,7 @@ export class CustomerManagedPolicy extends IAMPolicy {
     policyData: Policy | undefined
     policyDocument: PolicyVersion | undefined
     policyExpectations: ManagedPolicyExpectations | undefined
+    policyDataResult: TestResult | undefined
     constructor({environment, policyExpectations, policyIdentifier}: PolicyConstructorParameters) {
         super(environment)
         const {policyArn, policyName, policyPath} = policyIdentifier
@@ -26,15 +29,20 @@ export class CustomerManagedPolicy extends IAMPolicy {
         }
         if (policyName) this.name = policyName
         if (policyPath) this.path = policyPath
+        this.policyName = policyName
     }
-    async getPolicy() {
-        if (this.policyData) return this.policyData
+    async getPolicy(): Promise<TestResult> {
+        if (this.policyDataResult) return this.policyDataResult
         const params = {
             PolicyArn: await this.getArn()
         }
         const requestOutput = await this.client.send(new GetPolicyCommand(params))
         this.policyData = requestOutput.Policy
-        return this.policyData
+        if (this.policyExpectations?.PolicyDocumentStatements) {
+            await this.getPolicyDocument(this.policyData?.DefaultVersionId || "v1")
+        }
+        this.policyDataResult = ResourceLoadedSuccessfully(this.resourceName, this.name || "policy")
+        return this.policyDataResult
     }
     async getPolicyDocument(versionId: string) {
         if (this.policyDocument) return this.policyDocument
@@ -49,19 +57,14 @@ export class CustomerManagedPolicy extends IAMPolicy {
     }
     async getArn() {
         if (this.arn === undefined) {
-            const account = await this.environment.getAccountNumber()
+            const account = await this.environment.getAccountNumber()            
             this.arn = `arn:aws:iam::${account}:policy${this.path}${this.name}`
         }
         return this.arn
     }
     @CatchTestError()
     async loadResource() {
-        await this.getArn()
-        const policyData = await this.getPolicy()
-        if (this.policyExpectations?.PolicyDocumentStatements) {
-            await this.getPolicyDocument(policyData?.DefaultVersionId || "v1")
-        }
-        
-        return SuccessfulLoad(this.resourceName)
+        await this.getArn()        
+        return await this.getPolicy()
     }
 }

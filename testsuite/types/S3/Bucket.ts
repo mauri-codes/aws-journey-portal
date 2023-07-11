@@ -10,6 +10,6 @@ export interface BucketIdentifier {
 
 export interface BucketConstructorParameters {
     environment: AWSEnvironment
-    bucketExpectations: BucketExpectations,
+    bucketExpectations?: BucketExpectations,
     bucketIdentifier: BucketIdentifier
 }
