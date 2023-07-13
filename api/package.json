@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.119",
+    "typescript": "^5.1.6"
+  },
+  "scripts": {
+    "build": "rm -rf lib && npx tsc && cp package.json lib/package.json && cp package-lock.json lib/package-lock.json && cd lib &&  npm install --production && cd ..",
+    "deploy": "cd lib && zip -r -X ../api.zip * && cd .. && aws s3 cp api.zip s3://journey-infrastructure/lambda/api.zip && rm -rf api.zip"
+  }
+}
